@@ -19,4 +19,29 @@ class CashTransaction extends Model
     {
         return $this->type === 'income' ? 'Pemasukan' : 'Pengeluaran';
     }
+
+    public function isIncome(): bool
+    {
+        return $this->type === 'income';
+    }
+
+    public function isExpense(): bool
+    {
+        return $this->type === 'expense';
+    }
+
+    public function scopeIncome($query)
+    {
+        return $query->where('type', 'income');
+    }
+
+    public function scopeExpense($query)
+    {
+        return $query->where('type', 'expense');
+    }
+
+    public function scopeCategory($query, string $category)
+    {
+        return $query->where('category', $category);
+    }
 }

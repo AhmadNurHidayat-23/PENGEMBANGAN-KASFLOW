@@ -96,4 +96,28 @@ class CashFlowTest extends TestCase
         $this->put('/transactions/999', $this->data())->assertNotFound();
         $this->delete('/transactions/999')->assertNotFound();
     }
+
+    public function test_cash_transaction_type_helpers_and_scopes(): void
+    {
+        $income = CashTransaction::create($this->data([
+            'type' => 'income',
+            'category' => 'Operasional',
+            'amount' => 500000,
+        ]));
+        $expense = CashTransaction::create($this->data([
+            'type' => 'expense',
+            'category' => 'Konsumsi',
+            'amount' => 150000,
+        ]));
+
+        $this->assertTrue($income->isIncome());
+        $this->assertFalse($income->isExpense());
+
+        $this->assertTrue($expense->isExpense());
+        $this->assertFalse($expense->isIncome());
+
+        $this->assertCount(1, CashTransaction::income()->where('id', $income->id)->get());
+        $this->assertCount(1, CashTransaction::expense()->where('id', $expense->id)->get());
+        $this->assertCount(1, CashTransaction::category('Konsumsi')->where('id', $expense->id)->get());
+    }
 }
